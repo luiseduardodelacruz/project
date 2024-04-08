@@ -1,77 +1,88 @@
 <?php
    
-require_once("_db.php");
+require_once ("_db.php");
 
-if (isset($_POST['accion'])) { 
-    switch ($_POST['accion']) {
-        // Casos de registros
+
+
+
+if (isset($_POST['accion'])){ 
+    switch ($_POST['accion']){
+        //casos de registros
         case 'editar_registro':
             editar_registro();
             break; 
 
-        case 'eliminar_registro':
+            case 'eliminar_registro';
             eliminar_registro();
+    
             break;
 
-        case 'acceso_user':
+            case 'acceso_user';
             acceso_user();
             break;
-    }
-}
 
-function editar_registro() {
-    global $conexion;
-    extract($_POST);
-    
-    $consulta = "UPDATE user SET nombre = ?, correo = ?, telefono = ?, password = ?, rol = ? WHERE id = ?";
-    
-    $stmt = $conexion->prepare($consulta);
-    $stmt->bind_param("ssssii", $nombre, $correo, $telefono, $password, $rol, $id);
-    $stmt->execute();
-    
-    header('Location: ../views/user.php');
+
+		}
+
+	}
+
+    function editar_registro() {
+		$conexion=mysqli_connect("localhost","root","","r_user");
+		extract($_POST);
+		$consulta="UPDATE user SET nombre = '$nombre', correo = '$correo', telefono = '$telefono',
+		password ='$password', rol = '$rol' WHERE id = '$id' ";
+
+		mysqli_query($conexion, $consulta);
+
+
+		header('Location: ../views/user.php');
+
 }
 
 function eliminar_registro() {
-    global $conexion;
-    $id = $_POST['id'];
-    
-    $consulta = "DELETE FROM user WHERE id = ?";
-    
-    $stmt = $conexion->prepare($consulta);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    
+    $conexion=mysqli_connect("localhost","root","","r_user");
+    extract($_POST);
+    $id= $_POST['id'];
+    $consulta= "DELETE FROM user WHERE id= $id";
+
+    mysqli_query($conexion, $consulta);
+
+
     header('Location: ../views/user.php');
+
 }
 
 function acceso_user() {
-    global $conexion;
-    session_start();
-    
     $nombre = $_POST['nombre'];
     $password = $_POST['password'];
-    
+    session_start();
+
     try {
-        $consulta = "SELECT * FROM user WHERE nombre = ?";
-        $stmt = $conexion->prepare($consulta);
-        $stmt->bind_param("s", $nombre);
-        $stmt->execute();
-        
-        $resultado = $stmt->get_result();
-        
-        if ($resultado->num_rows === 0) {
+        $conexion = mysqli_connect("localhost", "root", "", "r_user");
+
+        if (!$conexion) {
+            throw new Exception("No se pudo establecer la conexión a la base de datos.");
+        }
+
+        $consulta = "SELECT * FROM user WHERE nombre='$nombre'";
+        $resultado = mysqli_query($conexion, $consulta);
+
+        if (!$resultado) {
+            throw new Exception("Error al realizar la consulta en la base de datos.");
+        }
+
+        $filas = mysqli_fetch_array($resultado);
+
+        if (!$filas) {
             throw new Exception("El usuario '$nombre' no existe.");
         }
-        
-        $filas = $resultado->fetch_assoc();
-        
+
         if ($filas['password'] != $password) {
             throw new Exception("La contraseña es incorrecta.");
         }
-        
+
         $_SESSION['nombre'] = $nombre;
-        
+
         if ($filas['rol'] == 1) {
             header('Location: ../views/user.php');
         } elseif ($filas['rol'] == 2) {
