@@ -1,5 +1,12 @@
 <?php
-$conexion = mysqli_connect("localhost", "root", "", "r_user");
+require_once("config.php");
+
+$conexion = mysqli_connect($host, $user, $password, $database);
+
+if(!$conexion) {
+    echo "No se pudo establecer la conexión a la base de datos. Error: " . mysqli_connect_error();
+    exit;
+}
 
 if(isset($_POST['registrar'])) {
 
