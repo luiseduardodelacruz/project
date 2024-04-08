@@ -61,25 +61,25 @@ mysqli_stmt_close($consulta);
                             <h3 class="text-center">Editar usuario</h3>
                             <div class="form-group">
                                 <label for="nombre" class="form-label">Nombre *</label>
-                                <input type="text" id="nombre" name="nombre" class="form-control" value="<?php echo $usuario['nombre']; ?>" required>
+                                <input type="text" id="nombre" name="nombre" class="form-control" value="<?php echo htmlspecialchars($usuario['nombre'], ENT_QUOTES, 'UTF-8'); ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="correo">Correo:</label><br>
-                                <input type="email" name="correo" id="correo" class="form-control" value="<?php echo $usuario['correo']; ?>">
+                                <input type="email" name="correo" id="correo" class="form-control" value="<?php echo htmlspecialchars($usuario['correo'], ENT_QUOTES, 'UTF-8'); ?>">
                             </div>
                             <div class="form-group">
                                 <label for="telefono" class="form-label">Teléfono *</label>
-                                <input type="tel" id="telefono" name="telefono" class="form-control" value="<?php echo $usuario['telefono']; ?>" required>
+                                <input type="tel" id="telefono" name="telefono" class="form-control" value="<?php echo htmlspecialchars($usuario['telefono'], ENT_QUOTES, 'UTF-8'); ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="password">Contraseña:</label><br>
-                                <input type="password" name="password" id="password" class="form-control" value="<?php echo $usuario['password']; ?>" required>
+                                <input type="password" name="password" id="password" class="form-control" value="<?php echo htmlspecialchars($usuario['password'], ENT_QUOTES, 'UTF-8'); ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="rol" class="form-label">Rol de usuario *</label>
-                                <input type="number" id="rol" name="rol" class="form-control" placeholder="Escribe el rol, 1 admin, 2 lector.." value="<?php echo $usuario['rol']; ?>" required>
+                                <input type="number" id="rol" name="rol" class="form-control" placeholder="Escribe el rol, 1 admin, 2 lector.." value="<?php echo htmlspecialchars($usuario['rol'], ENT_QUOTES, 'UTF-8'); ?>" required>
                                 <input type="hidden" name="accion" value="editar_registro">
-                                <input type="hidden" name="id" value="<?php echo $id; ?>">
+                                <input type="hidden" name="id" value="<?php echo htmlspecialchars($id, ENT_QUOTES, 'UTF-8'); ?>">
                             </div>
                             <br>
                             <div class="mb-3">
