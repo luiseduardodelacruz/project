@@ -2,9 +2,6 @@
    
 require_once ("_db.php");
 
-
-
-
 if (isset($_POST['accion'])){ 
     switch ($_POST['accion']){
         //casos de registros
@@ -12,44 +9,55 @@ if (isset($_POST['accion'])){
             editar_registro();
             break; 
 
-            case 'eliminar_registro';
+        case 'eliminar_registro':
             eliminar_registro();
-    
             break;
 
-            case 'acceso_user';
+        case 'acceso_user':
             acceso_user();
             break;
+    }
+}
 
+function editar_registro() {
+    $conexion = mysqli_connect("localhost", "root", "", "r_user");
+    extract($_POST);
 
-		}
+    // Preparar la consulta utilizando una sentencia preparada
+    $consulta = "UPDATE user SET nombre = ?, correo = ?, telefono = ?, password = ?, rol = ? WHERE id = ?";
+    $stmt = mysqli_prepare($conexion, $consulta);
 
-	}
+    // Vincular parámetros
+    mysqli_stmt_bind_param($stmt, "ssssii", $nombre, $correo, $telefono, $password, $rol, $id);
 
-    function editar_registro() {
-		$conexion=mysqli_connect("localhost","root","","r_user");
-		extract($_POST);
-		$consulta="UPDATE user SET nombre = '$nombre', correo = '$correo', telefono = '$telefono',
-		password ='$password', rol = '$rol' WHERE id = '$id' ";
+    // Ejecutar la consulta
+    mysqli_stmt_execute($stmt);
 
-		mysqli_query($conexion, $consulta);
+    // Cerrar consulta preparada
+    mysqli_stmt_close($stmt);
 
-
-		header('Location: ../views/user.php');
-
+    header('Location: ../views/user.php');
 }
 
 function eliminar_registro() {
-    $conexion=mysqli_connect("localhost","root","","r_user");
+    $conexion = mysqli_connect("localhost", "root", "", "r_user");
     extract($_POST);
-    $id= $_POST['id'];
-    $consulta= "DELETE FROM user WHERE id= $id";
+    $id = $_POST['id'];
 
-    mysqli_query($conexion, $consulta);
+    // Preparar la consulta utilizando una sentencia preparada
+    $consulta = "DELETE FROM user WHERE id = ?";
+    $stmt = mysqli_prepare($conexion, $consulta);
 
+    // Vincular parámetro
+    mysqli_stmt_bind_param($stmt, "i", $id);
+
+    // Ejecutar la consulta
+    mysqli_stmt_execute($stmt);
+
+    // Cerrar consulta preparada
+    mysqli_stmt_close($stmt);
 
     header('Location: ../views/user.php');
-
 }
 
 function acceso_user() {
@@ -64,8 +72,13 @@ function acceso_user() {
             throw new Exception("No se pudo establecer la conexión a la base de datos.");
         }
 
-        $consulta = "SELECT * FROM user WHERE nombre='$nombre'";
-        $resultado = mysqli_query($conexion, $consulta);
+        $consulta = "SELECT * FROM user WHERE nombre=?";
+        $stmt = mysqli_prepare($conexion, $consulta);
+
+        mysqli_stmt_bind_param($stmt, "s", $nombre);
+        mysqli_stmt_execute($stmt);
+
+        $resultado = mysqli_stmt_get_result($stmt);
 
         if (!$resultado) {
             throw new Exception("Error al realizar la consulta en la base de datos.");
@@ -96,3 +109,4 @@ function acceso_user() {
         session_destroy();
     }
 }
+?>
