@@ -30,7 +30,7 @@ if (isset($_POST['accion'])) {
 
 function editar_registro()
 {
-    $conexion = mysqli_connect("localhost", "root", "", "r_user");
+    $conexion = establecer_conexion_db();
 
     // Verificar la conexión
     if (!$conexion) {
@@ -73,7 +73,7 @@ function editar_registro()
 
 function eliminar_registro()
 {
-    $conexion = mysqli_connect("localhost", "root", "", "r_user");
+    $conexion = establecer_conexion_db();
 
     // Verificar la conexión
     if (!$conexion) {
@@ -122,7 +122,7 @@ function acceso_user()
     session_start();
 
     try {
-        $conexion = mysqli_connect("localhost", "root", "", "r_user");
+        $conexion = establecer_conexion_db();
 
         // Verificar la conexión
         if (!$conexion) {
@@ -181,5 +181,18 @@ function mostrar_error($mensaje)
     $_SESSION['error_message'] = $mensaje;
     header('Location: error.php');
     exit();
+}
+
+function establecer_conexion_db()
+{
+    $host = "localhost";
+    $usuario = "root";
+    $contrasena = "";
+    $base_de_datos = "r_user";
+
+    // Crear conexión
+    $conexion = mysqli_connect($host, $usuario, $contrasena, $base_de_datos);
+
+    return $conexion;
 }
 ?>
