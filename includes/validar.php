@@ -1,33 +1,32 @@
 <?php
-$conexion= mysqli_connect("localhost", "root", "", "r_user");
+$conexion = mysqli_connect("localhost", "root", "", "r_user");
 
-if(isset($_POST['registrar'])){
+if(isset($_POST['registrar'])) {
 
     if(strlen($_POST['nombre']) >=1 && strlen($_POST['correo'])  >=1 && strlen($_POST['telefono'])  >=1 
-    && strlen($_POST['password'])  >=1 && strlen($_POST['rol']) >= 1 ){
+    && strlen($_POST['password'])  >=1 && strlen($_POST['rol']) >= 1 ) {
 
-    $nombre = trim($_POST['nombre']);
-    $correo = trim($_POST['correo']);
-    $telefono = trim($_POST['telefono']);
-    $password = trim($_POST['password']);
-    $rol = trim($_POST['rol']);
+        $nombre = trim($_POST['nombre']);
+        $correo = trim($_POST['correo']);
+        $telefono = trim($_POST['telefono']);
+        $password = trim($_POST['password']);
+        $rol = trim($_POST['rol']);
 
-    $consulta= "INSERT INTO user (nombre, correo, telefono, password, rol)
-    VALUES ('$nombre', '$correo','$telefono','$password', '$rol' )";
+        // Sentencia preparada
+        $consulta = mysqli_prepare($conexion, "INSERT INTO user (nombre, correo, telefono, password, rol) VALUES (?, ?, ?, ?, ?)");
 
-    mysqli_query($conexion, $consulta);
-    mysqli_close($conexion);
+        // Vincular parámetros
+        mysqli_stmt_bind_param($consulta, "sssss", $nombre, $correo, $telefono, $password, $rol);
 
-    header('Location: ../views/user.php');
-  }
+        // Ejecutar consulta
+        mysqli_stmt_execute($consulta);
+
+        // Cerrar consulta preparada
+        mysqli_stmt_close($consulta);
+
+        mysqli_close($conexion);
+
+        header('Location: ../views/user.php');
+    }
 }
-
-
-
-
-
-
-
-
-
 ?>
